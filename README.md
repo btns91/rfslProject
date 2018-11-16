@@ -2,5 +2,6 @@
 data migration from Alfresco to google drive 
 
 
+Run application with 
 
-test commit!!
+./gradlew clean build run
