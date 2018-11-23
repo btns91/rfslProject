@@ -1,43 +1,39 @@
 package com.migration.rfsl;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.migration.rfsl.model.Planets;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class RfslApplication {
 
+    ObjectMapper mapper = new ObjectMapper();
+
     public static void main(String[] args) {
+        RfslApplication app = new RfslApplication();
 
         try {
-            performGetRequest();
+            Planets planets = app.getPlanets();
+
+            planets.getResults().forEach(p -> System.out.println(p.getName()));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
-    private static void performGetRequest() throws IOException {
+    private Planets getPlanets() throws IOException {
         HttpClient client = new DefaultHttpClient();
-        HttpGet request = new HttpGet("http://www.google.com");
+        HttpGet request = new HttpGet("https://swapi.co/api/planets");
+        request.setHeader(HttpHeaders.ACCEPT, "application/json");
         HttpResponse response = client.execute(request);
 
-        BufferedReader rd = new BufferedReader
-                (new InputStreamReader(
-                        response.getEntity().getContent()));
-
-        StringBuilder textView = new StringBuilder();
-        String line = "";
-        while ((line = rd.readLine()) != null) {
-            textView.append(line);
-        }
-
-        System.out.println(textView);
+        return mapper.readValue(response.getEntity().getContent(), Planets.class);
     }
 }
