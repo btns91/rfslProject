@@ -1,64 +1,57 @@
 package com.migration.rfsl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-//import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-
-import com.migration.rfsl.model.Planets;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.migration.rfsl.model.alfresco.ListObject;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 
- import com.fasterxml.jackson.databind.ObjectMapper;
+public class RfslApplication {
 
+    private static final Logger LOG = LoggerFactory.getLogger(RfslApplication.class);
 
+    ObjectMapper mapper = new ObjectMapper();
 
- public class  RfslApplication {
-     ObjectMapper mapper = new ObjectMapper();
+    public static void main(String[] args) {
 
-     public static void main(String[] args) {
-         RfslApplication app = new RfslApplication();
-         try {
-             Planets planets = app.getPlanets();
-             planets.getResults().forEach(p -> System.out.println(p.getName()));
+        LOG.info("Performing the request...");
 
-         } catch (IOException e) {
-             e.printStackTrace();
-         }
-     }
+        RfslApplication app = new RfslApplication();
+        try {
 
+            ListObject result = app.performRequest();
 
-         private Planets getPlanets() throws IOException {
-             String webPage = "http://localhost:8080/alfresco/api/-default-/public/alfresco/versions/1/nodes/-root-/children ";
-             String name = "admin";
-             String password = "hiziggyc";
+            LOG.info("Count is " + result.getPagination().getCount());
+            LOG.info("Total items is " + result.getPagination().getTotalItems());
 
-             String authString = name + ":" + password;
-             System.out.println("auth string: " + authString);
-             byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
-             String authStringEnc = new String(authEncBytes);
-             System.out.println("Base64 encoded auth string: " + authStringEnc);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-             URL url = new URL(webPage);
-             URLConnection urlConnection = url.openConnection();
-             urlConnection.setRequestProperty("Authorization", "Basic " + authStringEnc);
-             InputStream is = urlConnection.getInputStream();
-             InputStreamReader isr = new InputStreamReader(is);
+    private ListObject performRequest() throws IOException {
 
-             int numCharsRead;
-             char[] charArray = new char[1024];
-             StringBuffer sb = new StringBuffer();
-             while ((numCharsRead = isr.read(charArray)) > 0) {
-                 sb.append(charArray, 0, numCharsRead);
-             }
-             String result = sb.toString();
+        CloseableHttpClient client = HttpClients.createDefault();
 
-             //System.out.println("*** BEGIN ***");
-             //System.out.println(result);
-             //System.out.println("*** END ***");
-             return mapper.readValue(result.getEntity().getContent(), Planets.class);
-         }
+        HttpGet request = new HttpGet("http://localhost:8080/alfresco/api/-default-/public/alfresco/versions/1/nodes/-root-/children");
+        request.setHeader(HttpHeaders.ACCEPT, "application/json");
 
-     }
+        String authenticationString = new String("Basic " + Base64.encodeBase64("admin:hiziggyc".getBytes()));
+
+        LOG.info("Authenticating with: " + authenticationString);
+
+        request.setHeader(HttpHeaders.AUTHORIZATION, authenticationString);
+
+        HttpResponse response = client.execute(request);
+
+        return mapper.readValue(response.getEntity().getContent(), ListObject.class);
+    }
+}
