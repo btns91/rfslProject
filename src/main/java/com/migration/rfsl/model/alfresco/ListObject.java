@@ -26,4 +26,6 @@ public class ListObject {
     public void setEntries(List<AlfrescoEntry> entries) {
         this.entries = entries;
     }
+
+
 }
