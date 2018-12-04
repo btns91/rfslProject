@@ -3,7 +3,7 @@ package com.migration.rfsl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.migration.rfsl.model.alfresco.ListObject;
-import com.migration.rfsl.model.alfresco.RootObject;
+import com.migration.rfsl.model.alfresco.ResponseResult;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -33,7 +33,7 @@ public class RfslApplication {
         RfslApplication app = new RfslApplication();
         try {
 
-            RootObject result = app.performRequest(null);
+            ResponseResult result = app.performRequest(null);
 //            int count = result.getList().getPagination().getCount();
 //            int totalItems = result.getList().getPagination().getTotalItems();
 
@@ -43,14 +43,14 @@ public class RfslApplication {
             //for(int j = 0; j <2; j++) {
             String[] ID = app.rootNode(result);
 
-            // ArrayList<RootObject> listOfChildrens = new ArrayList<RootObject>();
+            // ArrayList<ResponseResult> listOfChildrens = new ArrayList<ResponseResult>();
 
 
             for (int i = 0; i < result.getList().getPagination().getCount(); i++) {
 
 
                 //LOG.info(ID[i]);
-                RootObject resultss = app.performRequest(ID[i]);
+                ResponseResult resultss = app.performRequest(ID[i]);
 
                 //listOfChildrens.add(resultss);
 
@@ -69,11 +69,11 @@ public class RfslApplication {
                 LOG.info("names of folder are " + result.getList().getEntries().get(i).getEntry().getName());
                 LOG.info("id" + result.getList().getEntries().get(i).getEntry().getId());
 
-                RootObject ap  = app.performRequest(ID);
+                ResponseResult ap  = app.performRequest(ID);
 
                 *//*
 */
-/*List<RootObject> ap = null;
+/*List<ResponseResult> ap = null;
                 ap.add(app.performRequest(ID));*//*
 */
 /*
@@ -93,7 +93,7 @@ public class RfslApplication {
         }
     }
 
-    private RootObject performRequest(String ID) throws IOException {
+    private ResponseResult performRequest(String ID) throws IOException {
         if(ID == null ){
             ID = "-root-";
         }
@@ -108,9 +108,9 @@ public class RfslApplication {
         request.setHeader(HttpHeaders.ACCEPT, "application/json");
         request.setHeader(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46aGl6aWdneWM=");
         HttpResponse response = client.execute(request);
-        return mapper.readValue(response.getEntity().getContent(), RootObject.class);
+        return mapper.readValue(response.getEntity().getContent(), ResponseResult.class);
     }
-    private String[] rootNode (RootObject result){
+    private String[] rootNode (ResponseResult result){
 
         String[] id = new String[result.getList().getPagination().getCount()];
 

@@ -1,6 +1,6 @@
 package com.migration.rfsl.model.alfresco;
 
-public class RootObject {
+public class ResponseResult {
     ListObject list;
 
     public ListObject getList() {
