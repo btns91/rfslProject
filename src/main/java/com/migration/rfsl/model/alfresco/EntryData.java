@@ -5,12 +5,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EntryData {
 
-    //TODO oti alla data thes na diavaseis apo to json prepei na ftiakseis to antistoixo variable gia na ta kanei map automatopoiimena
+
     String createdAt;
     Boolean isFolder;
     Boolean isFile;
     String name;
     String parentId;
+    String id;
 
     public String getCreatedAt() {
         return createdAt;
@@ -44,6 +45,12 @@ public class EntryData {
         this.name = name;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {this.id = id;}
+
     public String getParentId() {
         return parentId;
     }
@@ -51,4 +58,6 @@ public class EntryData {
     public void setParentId(String parentId) {
         this.parentId = parentId;
     }
+
+
 }

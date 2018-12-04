@@ -1,3 +1,4 @@
+/*
 package com.migration.rfsl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,29 +34,59 @@ public class RfslApplication {
         try {
 
             RootObject result = app.performRequest(null);
+//            int count = result.getList().getPagination().getCount();
+//            int totalItems = result.getList().getPagination().getTotalItems();
 
-            for (int j = 0; j <2; j++){
+            //LOG.info("Count is " + count);
+            //LOG.info("Total items is " + totalItems);
 
-                String[] ID;
-                ID[] = app.rootNode(result);
+            //for(int j = 0; j <2; j++) {
+            String[] ID = app.rootNode(result);
 
-               // ArrayList<RootObject> listOfChildrens = new ArrayList<RootObject>();
-
-                for (int i = 0; i < result.getList().getPagination().getCount(); i++) {
+            // ArrayList<RootObject> listOfChildrens = new ArrayList<RootObject>();
 
 
-                    //LOG.info(ID[i]);
-                    RootObject resultss = app.performRequest(ID[i]);
+            for (int i = 0; i < result.getList().getPagination().getCount(); i++) {
 
-                    //listOfChildrens.add(resultss);
 
-                    app.rootNode(resultss);
+                //LOG.info(ID[i]);
+                RootObject resultss = app.performRequest(ID[i]);
 
-                    //String[] IDs = app.rootNode(result);
+                //listOfChildrens.add(resultss);
 
-                    //ap.add(app.performRequest(ID))
-                }
+                app.rootNode(resultss);
+
+                //String[] IDs = app.rootNode(result);
+
+                //ap.add(app.performRequest(ID))
             }
+            //}
+
+            */
+/*for(int i=0; i<result.getList().getPagination().getCount(); i++){
+                String ID = result.getList().getEntries().get(i).getEntry().getId();
+
+                LOG.info("names of folder are " + result.getList().getEntries().get(i).getEntry().getName());
+                LOG.info("id" + result.getList().getEntries().get(i).getEntry().getId());
+
+                RootObject ap  = app.performRequest(ID);
+
+                *//*
+*/
+/*List<RootObject> ap = null;
+                ap.add(app.performRequest(ID));*//*
+*/
+/*
+
+                LOG.info("Count is " + ap.getList().getPagination().getCount());
+                LOG.info("Total items is " + ap.getList().getPagination().getTotalItems());
+
+                for(int j=0; j<ap.getList().getPagination().getCount(); j++) {
+
+                    LOG.info("names of folder are " + ap.getList().getEntries().get(j).getEntry().getName());
+                    LOG.info("id " + ap.getList().getEntries().get(j).getEntry().getId());
+                }
+            }*//*
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -68,6 +99,12 @@ public class RfslApplication {
         }
         CloseableHttpClient client = HttpClients.createDefault();
         HttpGet request = new HttpGet("http://localhost:8080/alfresco/api/-default-/public/alfresco/versions/1/nodes/"+ID+"/children");
+
+        //LOG.info("http://localhost:8080/alfresco/api/-default-/public/alfresco/versions/1/nodes/"+ID+"/children");
+//        LOG.info("--------------------------------------");
+//        LOG.info("subfolders");
+//        LOG.info("--------------------------------------");
+
         request.setHeader(HttpHeaders.ACCEPT, "application/json");
         request.setHeader(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46aGl6aWdneWM=");
         HttpResponse response = client.execute(request);
@@ -92,3 +129,4 @@ public class RfslApplication {
 
 
 }
+*/
